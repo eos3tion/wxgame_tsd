@@ -15,8 +15,6 @@ declare namespace wx {
         complete?: Function;
     }
 
-    interface DefaultCallbackHandler { (callback: Callback) }
-
     const enum Platform {
         Android = "android",
         DevTools = "devtools"
@@ -363,6 +361,63 @@ declare namespace wx {
 
     function requestMidasPayment(param: MidasPaymentParam);
 
+    interface GetShareInfoSuccessRtn {
+        /**
+         * 错误信息	  
+         */
+        errMsg: string;
+        /**
+         * 包括敏感数据在内的完整转发信息的加密数据，详细见[加密数据解密算法](https://developers.weixin.qq.com/minigame/dev/tutorial/open-ability/signature.html)	  
+         * 
+         * 示例代码
+         * encryptedData 解密后为以下 json 结构，详见[加密数据解密算法](https://developers.weixin.qq.com/minigame/dev/tutorial/open-ability/signature.html)。其中 openGId 为当前群的唯一标识
+         * ```json
+          {
+            "openGId": "OPENGID"
+          }
+          ```
+         *  **Tips** 
+         * * 如需要展示群名称，可以使用开放数据组件
+         */
+        encryptedData: string;
+        /**
+         * 加密算法的初始向量，详细见[加密数据解密算法](https://developers.weixin.qq.com/minigame/dev/tutorial/open-ability/signature.html)	    
+         */
+        iv: string;
+
+    }
+
+    interface GetShareInfoParam extends Callback {
+        /**
+         * 	是	shareTicket	  
+         */
+        shareTicket: string;
+        /**
+         * 	否	超时时间，单位 ms  
+         */
+        timeout: number;
+
+        /**
+         * 
+         * @param res 接口调用成功的回调函数
+         */
+        success(res: GetShareInfoSuccessRtn);
+    }
+
+    /**
+     * 获取转发详细信息  
+     * https://developers.weixin.qq.com/minigame/dev/api/wx.getShareInfo.html
+     * @param param 
+     */
+    function getShareInfo(param: GetShareInfoParam);
+
+    /**
+     * 隐藏转发按钮  
+     * https://developers.weixin.qq.com/minigame/dev/api/wx.hideShareMenu.html
+     * @param callback 
+     */
+    function hideShareMenu(callback: Callback);
+
 
     interface ShareAppMessageParam {
         /**
@@ -400,34 +455,96 @@ declare namespace wx {
 
     /**
      * 显示当前页面的转发按钮
-     *
-     * @
+     * https://developers.weixin.qq.com/minigame/dev/api/wx.showShareMenu.html  
+     * 
+     * @example
+     * wx.showShareMenu({
+        withShareTicket: true
+       })
+     * 
      */
     function showShareMenu(param?: ShowShareMenuParam);
 
     /**
      * 监听用户点击右上角菜单的“转发”按钮时触发的事件
-     *
-     * @
+     * https://developers.weixin.qq.com/minigame/dev/api/wx.onShareAppMessage.html
+     * 
      * @param {(param: {}) => ShareAppMessageParam} callback
      */
     function onShareAppMessage(callback: (param: {}) => ShareAppMessageParam);
 
     /**
-     * 取消监听用户点击右上角菜单的“转发”按钮时触发的事件
-     *
-     * @
+     * 取消监听用户点击右上角菜单的“转发”按钮时触发的事件  
+     * https://developers.weixin.qq.com/minigame/dev/api/wx.offShareAppMessage.html
+     * 
      * @param {({})} callback
      */
     function offShareAppMessage(callback?: ({}));
 
     /**
      * 主动拉起转发，进入选择通讯录界面。
-     *
-     * @
+     * https://developers.weixin.qq.com/minigame/dev/api/wx.shareAppMessage.html
+     * 
      * @param {ShareAppMessageParam} param
      */
     function shareAppMessage(param: ShareAppMessageParam);
+
+    interface UpdateShareMenuParam extends Callback {
+        /**
+         * 是否使用带 shareTicket 的转发详情  
+         * 默认值：false  
+         * 
+         */
+        withShareTicket?: boolean;
+        /**
+         * 是否是动态消息，详见动态消息  
+         * 默认值：false  
+         * @version >=2.4.0
+         */
+        isUpdatableMessage?: boolean;
+        /**
+         * 动态消息的 activityId。通过 createActivityId 接口获取  
+         * @version >=2.4.0
+         */
+        activityId?: string;
+        /**
+         * 动态消息的模板信息  
+         * @version >=2.4.0
+         */
+        templateInfo?: TemplateInfo;
+    }
+
+    interface TemplateInfo {
+        /**
+         * 参数列表
+         */
+        parameterList: Param[];
+    }
+
+    interface Param {
+        /**
+         * 参数名  
+         */
+        name: string;
+        /**
+         * 参数值  
+         */
+        value: string;
+
+    }
+
+    /**
+     * 更新转发属性
+     * https://developers.weixin.qq.com/minigame/dev/api/wx.updateShareMenu.html
+     * @param param 
+     * 
+     * @example
+     * wx.updateShareMenu({
+        withShareTicket: true,
+        success() { }
+       })
+     */
+    function updateShareMenu(param: UpdateShareMenuParam);
 
     /**
      * 
@@ -458,7 +575,6 @@ declare namespace wx {
      * // 新的版本下载失败
      * })
      *
-     * @
      * @interface UpdateManager
      */
     interface UpdateManager {
@@ -522,7 +638,8 @@ declare namespace wx {
          */
         extraData?: object;
         /**
-         * release	否	要打开的小程序版本。仅在当前小程序为开发版或体验版时此参数有效。如果当前小程序是正式版，则打开的小程序必定是正式版。
+         * 要打开的小程序版本。仅在当前小程序为开发版或体验版时此参数有效。如果当前小程序是正式版，则打开的小程序必定是正式版。
+         * 默认值： release
          */
         envVersion?: NavigateToMiniProgramEnvVersion;
     }
@@ -749,7 +866,7 @@ declare namespace wx {
      * 退出当前小游戏
      * @param callback 
      */
-    function exitMiniProgram(callback: DefaultCallbackHandler);
+    function exitMiniProgram(callback: Callback);
 
     /**
      * 场景值  
@@ -1094,21 +1211,24 @@ declare namespace wx {
 
     /**
      * 取消监听小游戏隐藏到后台事件  
+     * https://developers.weixin.qq.com/minigame/dev/api/wx.offHide.html
      * @param callback 小游戏隐藏到后台事件的回调函数
      */
-    function offHide(callback: DefaultCallbackHandler);
+    function offHide(callback: ({}));
 
     /**
      * 取消监听小游戏回到前台的事件  
+     * https://developers.weixin.qq.com/minigame/dev/api/wx.offShow.html
      * @param callback 小游戏回到前台的事件的回调函数
      */
-    function offShow(callback: DefaultCallbackHandler);
+    function offShow(callback: ({}));
 
     /**
      * 监听小游戏隐藏到后台事件。锁屏、按 HOME 键退到桌面、显示在聊天顶部等操作会触发此事件。
+     * https://developers.weixin.qq.com/minigame/dev/api/wx.onHide.html
      * @param callback 小游戏隐藏到后台事件的回调函数
      */
-    function onHide(callback: DefaultCallbackHandler);
+    function onHide(callback: ({}));
 
     /**
      * 监听小游戏回到前台的事件
