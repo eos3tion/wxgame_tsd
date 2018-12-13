@@ -389,13 +389,14 @@ declare namespace wx {
 
     interface GetShareInfoParam extends Callback {
         /**
-         * 	是	shareTicket	  
+         * shareTicket	  
          */
         shareTicket: string;
         /**
-         * 	否	超时时间，单位 ms  
+         * 	超时时间，单位 ms  
+         * @version >=1.9.90
          */
-        timeout: number;
+        timeout?: number;
 
         /**
          * 
