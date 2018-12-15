@@ -1171,7 +1171,7 @@ declare namespace wx {
         /**
          * 启动小游戏的 query 参数	  
          */
-        query: object;
+        query: any;
         /**
          * shareTicket，详见[获取更多转发信息](https://developers.weixin.qq.com/minigame/dev/tutorial/open-ability/share/share.html#%E8%8E%B7%E5%8F%96%E6%9B%B4%E5%A4%9A%E8%BD%AC%E5%8F%91%E4%BF%A1%E6%81%AF)	  
          */
