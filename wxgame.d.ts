@@ -1236,4 +1236,33 @@ declare namespace wx {
      * @param callback 小游戏回到前台的事件的回调函数
      */
     function onShow(callback: { (res: LaunchOption) });
+
+    interface OpenCustomerServiceConversationParam extends Callback {
+        /**
+         * 会话来源
+         */
+        sessionFrom?: string;
+        /**
+         * 是否显示会话内消息卡片，设置此参数为 true，用户进入客服会话之后会收到一个消息卡片，通过以下三个参数设置卡片的内容
+         */
+        showMessageCard?: boolean;
+        /**
+         * 会话内消息卡片标题
+         */
+        sendMessageTitle?: string;
+        /**
+         * 会话内消息卡片路径
+         */
+        sendMessagePath?: string;
+        /**
+         * 会话内消息卡片图片路径
+         */
+        sendMessageImg?: string;
+    }
+
+    /**
+     * https://developers.weixin.qq.com/minigame/dev/api/wx.openCustomerServiceConversation.html
+     * 进入客服会话，要求在用户发生过至少一次 touch 事件后才能调用。后台接入方式与小程序一致，详见 客服消息接入
+     */
+    function openCustomerServiceConversation(param?: OpenCustomerServiceConversationParam);
 }
