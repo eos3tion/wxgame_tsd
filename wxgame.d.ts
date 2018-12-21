@@ -1261,8 +1261,67 @@ declare namespace wx {
     }
 
     /**
-     * https://developers.weixin.qq.com/minigame/dev/api/wx.openCustomerServiceConversation.html
      * 进入客服会话，要求在用户发生过至少一次 touch 事件后才能调用。后台接入方式与小程序一致，详见 客服消息接入
      */
     function openCustomerServiceConversation(param?: OpenCustomerServiceConversationParam);
+
+
+    //--------------------------剪贴板-------------------------------
+    interface SetClipboardDataParam extends Callback {
+        /**
+         * 剪贴板的内容
+         */
+        data?: string;
+    }
+
+    /**
+     * 设置系统剪贴板的内容  
+     * https://developers.weixin.qq.com/minigame/dev/api/wx.setClipboardData.html
+     * 
+     * @version >1.1.0
+     * 
+     * @param obj 
+     * 
+     * @example
+     * wx.setClipboardData({
+     *      data: 'data',
+     *      success(res) {
+     *      wx.getClipboardData({
+     *          success(res) {
+     *              console.log(res.data) // data
+     *          }
+     *      })
+     *      }
+     * })
+     */
+    function setClipboardData(obj: SetClipboardDataParam);
+
+    interface GetClipboardDataSuccessRtn {
+        /**
+         * 剪贴板的内容
+         */
+        data: string;
+    }
+
+    interface GetClipboardDataParam extends Callback {
+        success(res: GetClipboardDataSuccessRtn);
+    }
+
+    /**
+     * 获取系统剪贴板的内容  
+     * https://developers.weixin.qq.com/minigame/dev/api/wx.getClipboardData.html
+     * 
+     * @version >1.1.0
+     * @param obj 
+     * 
+     * @example
+     * wx.getClipboardData({
+     *  success(res) {
+     *      console.log(res.data)
+     *  }
+     * }) 
+     * 
+     */
+    function getClipboardData(obj: GetClipboardDataParam);
+
 }
