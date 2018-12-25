@@ -151,6 +151,250 @@ declare namespace wx {
      */
     function getSystemInfoSync(): SystemInfo;
 
+    //----------------------------------------------登录 --------------------------------------------------------------
+
+    /**
+     * 检查登录态是否过期。  
+     * https://developers.weixin.qq.com/minigame/dev/api/wx.checkSession.html  
+        通过 `wx.login` 接口获得的用户登录态拥有一定的时效性。用户越久未使用小程序，用户登录态越有可能失效。反之如果用户一直在使用小程序，则用户登录态一直保持有效。具体时效逻辑由微信维护，对开发者透明。开发者只需要调用 wx.checkSession 接口检测当前用户登录态是否有效。
+
+        登录态过期后开发者可以再调用 wx.login 获取新的用户登录态。调用成功说明当前 session_key 未过期，调用失败说明 session_key 已过期。更多使用方法详见 [小程序登录](https://developers.weixin.qq.com/minigame/dev/tutorial/open-ability/login.html)。
+     * 
+     * @param param 
+     * 
+     * @example
+     * wx.checkSession({
+        success() {
+          // session_key 未过期，并且在本生命周期一直有效
+        },
+        fail() {
+          // session_key 已经失效，需要重新执行登录流程
+          wx.login() // 重新登录
+        }
+      })
+     * 
+     */
+    function checkSession(param: Callback);
+
+    /**
+     * 登录回调函数
+     */
+    interface LoginParam extends Callback {
+
+        /**
+         * 超时时间，单位ms
+         * @version >1.9.90
+         */
+        timeout?: number;
+        /**
+         * 
+         * @param res 用户登录凭证（有效期五分钟）。开发者需要在开发者服务器后台调用 [code2Session](https://developers.weixin.qq.com/minigame/dev/api/code2Session.html)，使用 `code` 换取 openid 和 session_key 等信息
+         */
+        success?(res: { code: string });
+    }
+
+    /**
+     * https://developers.weixin.qq.com/minigame/dev/api/wx.login.html
+     * 
+     * 调用接口获取登录凭证（code）。通过凭证进而换取用户登录态信息，包括用户的唯一标识（openid）及本次登录的会话密钥（session_key）等。用户数据的加解密通讯需要依赖会话密钥完成。更多使用方法详见 [小程序登录](https://developers.weixin.qq.com/minigame/dev/tutorial/open-ability/login.html)。
+     * @param param 
+     * 
+     * @example
+     * wx.login({
+     *    success(res) {
+     *    if (res.code) {
+     *      // 发起网络请求
+     *      wx.request({
+     *        url: 'https://test.com/onLogin',
+     *        data: {
+     *          code: res.code
+     *        }
+     *      })
+     *    } else {
+     *      console.log('登录失败！' + res.errMsg)
+     *    }
+     *  }
+     * })
+     */
+    function login(param: LoginParam);
+
+    //--------------------------------------------网络----------------------------------------------
+    //-------------------------------------------发起请求-------------------------------------------
+
+    interface RequestTaskOnHeadersReceivedCallback {
+        /**
+         * 开发者服务器返回的 HTTP Response Header
+         */
+        (header: { [key: string]: string })
+    }
+    /**
+     * 网络请求任务对象
+     * @version >1.4.0
+     */
+    interface RequestTask {
+        /**
+         * 中断请求任务
+         */
+        abort();
+
+        /**
+         * 监听 HTTP Response Header 事件。会比请求完成事件更早
+         * 
+         * @version >2.1.0 
+         * 
+         * @param callback 事件的回调函数
+         * 
+         */
+        onHeadersReceived(callback: RequestTaskOnHeadersReceivedCallback);
+
+        /**
+         * 取消监听 HTTP Response Header 事件
+         * @version >2.1.0 
+         * 
+         * @param callback
+         */
+        offHeadersReceived(callback: RequestTaskOnHeadersReceivedCallback);
+    }
+
+    const enum RequestMethod {
+        /**
+         * HTTP 请求 OPTIONS
+         */
+        OPTIONS = "OPTIONS",
+        /**
+         * HTTP 请求 GET
+         */
+        GET = "GET",
+        /**
+         * HTTP 请求 HEAD
+         */
+        HEAD = "HEAD",
+        /**
+         * HTTP 请求 POST
+         */
+        POST = "POST",
+        /**
+         * HTTP 请求 PUT
+         */
+        PUT = "PUT",
+        /**
+         * HTTP 请求 DELETE
+         */
+        DELETE = "DELETE",
+        /**
+         * HTTP 请求 TRACE
+         */
+        TRACE = "TRACE",
+        /**
+         * HTTP 请求 CONNECT
+         */
+        CONNECT = "CONNECT",
+
+    }
+
+    const enum RequestResponseType {
+        /**
+         * 响应的数据为文本
+         */
+        Text = "text",
+        /**
+         * 响应的数据为 ArrayBuffer
+         */
+        ArrayBuffer = "arraybuffer",
+
+    }
+
+    interface RequestSuccessRtn {
+        /**
+         * 开发者服务器返回的数据
+         */
+        data: string | any | ArrayBuffer;
+        /**
+         * 开发者服务器返回的 HTTP 状态码
+         */
+        statusCode: number;
+        /**
+         * 开发者服务器返回的 HTTP Response Header
+         */
+        header: { [header: string]: string };
+
+    }
+
+
+    interface RequestParam extends Callback {
+        /**
+         * 开发者服务器接口地址
+         */
+        url: string;
+        /**
+         * 请求的参数 data 参数说明
+         * 
+         * 最终发送给服务器的数据是 String 类型，如果传入的 data 不是 String 类型，会被转换成 String 。转换规则如下：
+
+         * * 对于 GET 方法的数据，会将数据转换成 query string（encodeURIComponent(k)=encodeURIComponent(v)&encodeURIComponent(k)=encodeURIComponent(v)...）
+         * * 对于 POST 方法且 header['content-type'] 为 application/json 的数据，会对数据进行 JSON 序列化
+         * * 对于 POST 方法且 header['content-type'] 为 application/x-www-form-urlencoded 的数据，会将数据转换成 query string （encodeURIComponent(k)=encodeURIComponent(v)&encodeURIComponent(k)=encodeURIComponent(v)...）
+         */
+        data?: string | any | ArrayBuffer;
+
+        /**
+         * 设置请求的 header，header 中不能设置 Referer。 
+         * `content-type` 默认为 `application/json`	
+         */
+        header?: { [header: string]: string };
+
+        /**
+         * HTTP 请求方法  
+         * 默认为`GET`
+         */
+        method?: RequestMethod;
+        /**
+         * 返回的数据格式  
+         * 默认为`json`
+         * 
+         * | 值  |	说明 |
+         * | --  | -- |
+         * |json |	返回的数据为 JSON，返回后会对返回的数据进行一次 `JSON.parse`|
+         * |其他  |	不对返回的内容进行 JSON.parse|
+         */
+        dataType?: string;
+        /**
+         * 响应的数据类型  
+         * 默认为`text`
+         */
+        responseType?: RequestResponseType;
+
+        /**
+         * 接口调用成功的回调函数
+         * @param rtn 
+         */
+        success?(rtn: RequestSuccessRtn);
+    }
+
+    /**
+     * 发起 HTTPS 网络请求。使用前请注意阅读[相关说明](https://developers.weixin.qq.com/minigame/dev/tutorial/ability/network.html)。
+     * 
+     * https://developers.weixin.qq.com/minigame/dev/api/wx.request.html
+     * 
+     * @example 
+     * wx.request({
+     *   url: 'test.php', // 仅为示例，并非真实的接口地址
+     *  data: {
+     *    x: '',
+     *    y: ''
+     *  },
+     *  header: {
+     *    'content-type': 'application/json' // 默认值
+     *  },
+     *  success(res) {
+     *    console.log(res.data)
+     *  }
+     * })
+     */
+    function request(param: RequestParam): RequestTask;
+
+    //------------------------------------------------米大师充值--------------------------------------------------------
+
     /**
      * 米大师支付环境
      *
