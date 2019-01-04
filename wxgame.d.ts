@@ -784,6 +784,8 @@ declare namespace wx {
     function updateShareMenu(param: UpdateShareMenuParam);
 
     /**
+     * UpdateManager 对象，用来管理更新，可通过 wx.getUpdateManager 接口获取实例。 
+     * https://developers.weixin.qq.com/minigame/dev/api/UpdateManager.html
      * 
      * **注： 检查更新操作由微信在小程序冷启动时自动触发，不需由开发者主动触发，开发者只需监听检查结果即可。**
      * 
@@ -817,31 +819,35 @@ declare namespace wx {
     interface UpdateManager {
 
         /**
-         * 监听检查更新结果回调
+         * 监听向微信后台请求检查更新结果事件。微信在小程序冷启动时自动检查更新，不需由开发者主动触发。  
+         * https://developers.weixin.qq.com/minigame/dev/api/UpdateManager.onCheckForUpdate.html
          *
-         * @param {{ (hasUpdate: boolean) }} callback
+         * @param {{ (hasUpdate: boolean) }} callback 向微信后台请求检查更新结果事件的回调函数
          * @memberof UpdateManager
          */
         onCheckForUpdate(callback: { (hasUpdate: boolean) });
 
         /**
-         * 当微信检查到小程序有新版本，会主动触发下载操作（无需开发者触发），当下载完成后，会通过 `onUpdateReady` 告知开发者。
+         * 监听小程序有版本更新事件。客户端主动触发下载（无需开发者触发），下载成功后回调
+         * https://developers.weixin.qq.com/minigame/dev/api/UpdateManager.onUpdateReady.html
          *
-         * @param {{ () }} callback
+         * @param {{ () }} callback 小程序有版本更新事件的回调函数
          * @memberof UpdateManager
          */
         onUpdateReady(callback: { () });
 
         /**
-         * 当微信检查到小程序有新版本，会主动触发下载操作（无需开发者触发），如果下载失败（可能是网络原因等），会通过 onUpdateFailed 告知开发者。
+         * 监听小程序更新失败事件。小程序有新版本，客户端主动触发下载（无需开发者触发），下载失败（可能是网络原因等）后回调  
+         * https://developers.weixin.qq.com/minigame/dev/api/UpdateManager.onUpdateFailed.html
          *
-         * @param {{ () }} callback
+         * @param {{ () }} callback 小程序更新失败事件的回调函数
          * @memberof UpdateManager
          */
         onUpdateFailed(callback: { () });
 
         /**
-         * 当小程序新版本已经下载时（即收到 onUpdateReady 回调），可以通过这个方法强制重启小程序并应用上最新版本。
+         * 强制小程序重启并使用新版本。在小程序新版本下载完成后（即收到 `onUpdateReady` 回调）调用。
+         * https://developers.weixin.qq.com/minigame/dev/api/UpdateManager.applyUpdate.html  
          *
          * @memberof UpdateManager
          */
@@ -849,9 +855,10 @@ declare namespace wx {
     }
 
     /**
+     * https://developers.weixin.qq.com/minigame/dev/api/wx.getUpdateManager.html
      * 获取更新管理器对象
      *
-     * @
+     * @version >1.9.90 低版本需做[兼容处理](https://developers.weixin.qq.com/minigame/dev/framework/compatibility.html)。
      * @returns {UpdateManager}
      */
     function getUpdateManager(): UpdateManager;
