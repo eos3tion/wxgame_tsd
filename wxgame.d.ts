@@ -1598,4 +1598,32 @@ declare namespace wx {
      */
     function getClipboardData(obj: GetClipboardDataParam);
 
+    interface PreviewImageParam extends Callback {
+        /**
+         * 需要预览的图片链接列表。2.2.3 起支持云文件ID。
+         */
+        urls: string[];
+
+        /**
+         * 当前显示图片的链接  
+         * 默认值：urls 的第一张
+         */
+        current?: string;
+
+    }
+
+    /**
+     * 在新页面中全屏预览图片。预览的过程中用户可以进行保存图片、发送给朋友等操作。  
+     * https://developers.weixin.qq.com/minigame/dev/api/wx.previewImage.html  
+     * 
+     * @param opt 
+     * 
+     * @example
+     * wx.previewImage({
+     *   current: '', // 当前显示图片的http链接
+     *   urls: [] // 需要预览的图片http链接列表
+     * })
+     */
+    function previewImage(opt: PreviewImageParam);
+
 }
