@@ -22,6 +22,27 @@ declare namespace wx {
     }
 
 
+    /**
+     * 位置样式
+     */
+    interface PositionStyle {
+        left: number;
+        top: number;
+    }
+
+    /**
+     * 大小样式
+     */
+    interface SizeStyle {
+        width: number;
+        height: number;
+    }
+
+    /**
+     * 矩形样式
+     */
+    interface RectanbleStyle extends PositionStyle, SizeStyle { }
+
     interface SystemInfo {
         /**
          * 手机品牌  
@@ -1102,6 +1123,160 @@ declare namespace wx {
          */
         offClose(callback: { () });
     }
+
+    const enum BannerAdErrorCode {
+        /**
+ * 异常情况：后端错误调用失败  
+ * 理由：该项错误不是开发者的异常情况  
+ * 解决方案：一般情况下忽略一段时间即可恢复。  
+ */
+        Code_1000 = 1000,
+        /**
+         * 异常情况：参数错误  
+         * 理由：使用方法错误  
+         * 解决方案：可以前往developers.weixin.qq.com确认具体教程（小程序和小游戏分别有各自的教程，可以在顶部选项中，“设计”一栏的右侧进行切换。  
+         */
+        Code_1001 = 1001,
+        /**
+         * 异常情况：广告单元无效  
+         * 理由：可能是拼写错误、或者误用了其他APP的广告ID  
+         * 解决方案：请重新前往mp.weixin.qq.com确认广告位ID。  
+         */
+        Code_1002 = 1002,
+        /**
+         * 异常情况：内部错误  
+         * 理由：该项错误不是开发者的异常情况  
+         * 解决方案：一般情况下忽略一段时间即可恢复。  
+         */
+        Code_1003 = 1003,
+        /**
+         * 异常情况：无适合的广告  
+         * 理由：广告不是每一次都会出现，这次没有出现可能是由于该用户不适合浏览广告  
+         * 解决方案：属于正常情况，且开发者需要针对这种情况做形态上的兼容。  
+         */
+        Code_1004 = 1004,
+        /**
+         * 异常情况：广告组件审核中  
+         * 理由：你的广告正在被审核，无法展现广告  
+         * 解决方案：请前往mp.weixin.qq.com确认审核状态，且开发者需要针对这种情况做形态上的兼容。  
+         */
+        Code_1005 = 1005,
+        /**
+         * 异常情况：广告组件被驳回  
+         * 理由：你的广告审核失败，无法展现广告  
+         * 解决方案：请前往mp.weixin.qq.com确认审核状态，且开发者需要针对这种情况做形态上的兼容。  
+         */
+        Code_1006 = 1006,
+        /**
+         * 异常情况：广告组件被驳回  
+         * 理由：你的广告能力已经被封禁，封禁期间无法展现广告  
+         * 解决方案：请前往mp.weixin.qq.com确认小程序广告封禁状态。  
+         */
+        Code_1007 = 1007,
+        /**
+         * 异常情况：广告单元已关闭  
+         * 理由：该广告位的广告能力已经被关闭  
+         * 解决方案：请前往mp.weixin.qq.com重新打开对应广告位的展现。  
+         */
+        Code_1008 = 1008,
+
+    }
+
+    interface BannerAdErrorParam {
+        /**
+         * 错误信息
+         */
+        errMsg: string;
+
+        /**
+         * 错误码  
+         * @version >=2.2.2
+         */
+        errCode: BannerAdErrorCode;
+    }
+
+    /**
+     * https://developers.weixin.qq.com/minigame/dev/api/BannerAd.html
+     */
+    interface BannerAd {
+        /**
+         * https://developers.weixin.qq.com/minigame/dev/api/BannerAd.show.html  
+         * 显示 banner 广告。
+         */
+        show(): Promise<void>;
+
+        /**
+         * https://developers.weixin.qq.com/minigame/dev/api/BannerAd.hide.html  
+         * 隐藏 banner 广告
+         */
+        hide();
+
+        /**
+         * https://developers.weixin.qq.com/minigame/dev/api/BannerAd.destroy.html  
+         * 销毁 banner 广告
+         */
+        destroy();
+
+        /**
+         * https://developers.weixin.qq.com/minigame/dev/api/BannerAd.onResize.html  
+         * 监听 banner 广告尺寸变化事件
+         * @param callback  广告尺寸变化事件的回调函数
+         */
+        onResize(callback: { (res: SizeStyle) });
+
+        /**
+         * https://developers.weixin.qq.com/minigame/dev/api/BannerAd.offResize.html  
+         * 取消监听 banner 广告尺寸变化事件
+         * @param callback 广告尺寸变化事件的回调函数
+         */
+        offResize(callback: { (res: SizeStyle) });
+
+        /**
+         * https://developers.weixin.qq.com/minigame/dev/api/BannerAd.onLoad.html  
+         * 监听 banner 广告加载事件  
+         * @param callback 广告加载事件的回调函数
+         */
+        onLoad(callback: { () });
+
+        /**
+         * https://developers.weixin.qq.com/minigame/dev/api/BannerAd.onLoad.html  
+         * 取消监听 banner 广告加载事件  
+         * @param callback 广告加载事件的回调函数
+         */
+        offLoad(callback: { () });
+
+
+        /**
+         * https://developers.weixin.qq.com/minigame/dev/api/BannerAd.onError.html  
+         * 监听 banner 广告错误事件
+         * @param callback 
+         */
+        onError(callback: { (res: BannerAdErrorParam) })
+    }
+
+    interface CreateBannerAdParam {
+
+        /**
+         * 	广告单元 id
+         */
+        adUnitId: string;
+
+        /**
+         * banner 广告组件的样式
+         */
+        style: RectanbleStyle;
+    }
+
+    /**
+     * https://developers.weixin.qq.com/minigame/dev/api/wx.createBannerAd.html
+     * 
+     * 创建 banner 广告组件。请通过 wx.getSystemInfoSync() 返回对象的 SDKVersion 判断基础库版本号 >= 2.0.4 后再使用该 API。同时，开发者工具上暂不支持调试该 API，请直接在真机上进行调试。  
+     * 
+     * **注意**   
+     * 小游戏广告能力目前暂时以邀请制开放申请，请留意后续通知
+     * @param param 
+     */
+    function createBannerAd(param: CreateBannerAdParam): BannerAd;
 
     //--------------------------生命周期-------------------------------
 
