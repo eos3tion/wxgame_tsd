@@ -1252,6 +1252,37 @@ declare namespace wx {
          * @param callback 
          */
         onError(callback: { (res: BannerAdErrorParam) })
+
+        /**
+         * banner 广告组件的样式。style 上的属性的值仅为开发者设置的值，banner 广告会根据开发者设置的宽度进行等比缩放，缩放后的真实尺寸需要通过 BannerAd.onResize() 事件获得。
+         */
+        style: {
+            /**
+             * banner 广告组件的左上角横坐标
+             */
+            left: number;
+            /**
+             * banner 广告组件的左上角纵坐标
+             */
+            top: number;
+            /**
+             * banner 广告组件的宽度。最小 300，最大至 屏幕宽度（屏幕宽度可以通过 wx.getSystemInfoSync() 获取）。
+             */
+            width: number;
+            /**
+             * banner 广告组件的高度
+             */
+            height: number;
+            /**
+             * banner 广告组件经过缩放后真实的宽度
+             */
+            realWidth: number;
+            /**
+             * banner 广告组件经过缩放后真实的高度
+             */
+            realHeight: number;
+
+        }
     }
 
     interface CreateBannerAdParam {
