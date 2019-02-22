@@ -26,16 +26,16 @@ declare namespace wx {
      * 位置样式
      */
     interface PositionStyle {
-        left: number;
-        top: number;
+        left?: number;
+        top?: number;
     }
 
     /**
      * 大小样式
      */
     interface SizeStyle {
-        width: number;
-        height: number;
+        width?: number;
+        height?: number;
     }
 
     /**
@@ -1126,10 +1126,10 @@ declare namespace wx {
 
     const enum BannerAdErrorCode {
         /**
- * 异常情况：后端错误调用失败  
- * 理由：该项错误不是开发者的异常情况  
- * 解决方案：一般情况下忽略一段时间即可恢复。  
- */
+         * 异常情况：后端错误调用失败  
+         * 理由：该项错误不是开发者的异常情况  
+         * 解决方案：一般情况下忽略一段时间即可恢复。  
+         */
         Code_1000 = 1000,
         /**
          * 异常情况：参数错误  
