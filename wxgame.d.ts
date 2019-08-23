@@ -1832,4 +1832,115 @@ declare namespace wx {
      */
     function previewImage(opt: PreviewImageParam);
 
+    /**
+     * 认证域  
+     * https://developers.weixin.qq.com/minigame/dev/guide/framework/authorize.html
+     */
+    const enum AuthorizeScope {
+        /**
+         * 用户信息  
+         * 对应接口 `wx.getUserInfo`
+         */
+        UserInfo = "scope.userInfo",
+
+        /**
+         * 地理位置  
+         * 对应接口 `wx.getLocation`
+         */
+        UserLocation = "scope.userLocation",
+
+        /**
+         * 微信运动步数  
+         * 对应接口 `wx.getWeRunData`  
+         */
+        WeRun = "scope.werun",
+        /**
+         * 保存到相册  
+         * 对应接口 `wx.saveImageToPhotosAlbum`
+         */
+        WritePhotosAlbum = "scope.writePhotosAlbum",
+
+    }
+
+
+    interface AuthorizeParam extends Callback {
+        /**
+         * 需要获取权限的 scope
+         */
+        scope: AuthorizeScope;
+
+    }
+
+    /**
+     * https://developers.weixin.qq.com/minigame/dev/api/open-api/authorize/wx.authorize.html
+     * https://developers.weixin.qq.com/minigame/dev/guide/framework/authorize.html
+     * 
+     * 提前向用户发起授权请求。调用后会立刻弹窗询问用户是否同意授权小程序使用某项功能或获取用户的某些数据，但不会实际调用对应接口。如果用户之前已经同意授权，则不会出现弹窗，直接返回成功。更多用法详见[用户授权](https://developers.weixin.qq.com/minigame/dev/guide/framework/authorize.html)
+     * 
+     * @example
+     * // 可以通过 wx.getSetting 先查询一下用户是否授权了 "scope.record" 这个 scope
+     * wx.getSetting({
+     * success(res) {
+     *   if (!res.authSetting['scope.record']) {
+     *      wx.authorize({
+     *        scope: 'scope.record',
+     *        success () {
+     *          // 用户已经同意小程序使用录音功能，后续调用 wx.startRecord 接口不会弹窗询问
+     *          wx.startRecord()
+     *        }
+     *      })
+     *    }
+     *  }
+     *})
+     */
+    function authorize(opt: AuthorizeParam);
+
+    /**
+     * 用户授权设置信息  
+     * https://developers.weixin.qq.com/minigame/dev/api/open-api/setting/AuthSetting.html
+     */
+    interface AuthSetting {
+        /**
+         * 是否授权用户信息，对应接口 `wx.getUserInfo`
+         */
+        [AuthorizeScope.UserInfo]: boolean;
+
+        /**
+         * 是否授权地理位置，对应接口 `wx.getLocation`
+         */
+        [AuthorizeScope.UserLocation]: boolean;
+
+        /**
+         * 是否授权微信运动步数，对应接口 `wx.getWeRunData`
+         */
+        [AuthorizeScope.WeRun]: boolean;
+
+        /**
+         * 是否授权保存到相册 `wx.saveImageToPhotosAlbum`
+         */
+        [AuthorizeScope.WritePhotosAlbum]: boolean;
+    }
+
+    interface GetSettingParam extends Callback {
+        success: { (res: { authSetting: AuthSetting }) }
+    }
+
+    /**
+     * 获取用户的当前设置。返回值中只会出现小程序已经向用户请求过的权限。  
+     * https://developers.weixin.qq.com/minigame/dev/api/open-api/setting/wx.getSetting.html
+     * @param opt 
+     * 
+     * @example
+     * wx.getSetting({
+     *   success (res) {
+     *     console.log(res.authSetting)
+     *     // res.authSetting = {
+     *     //   "scope.userInfo": true,
+     *     //   "scope.userLocation": true
+     *     // }
+     *   }
+     * })
+     */
+    function getSetting(opt: GetSettingParam);
+
 }
