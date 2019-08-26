@@ -1943,4 +1943,260 @@ declare namespace wx {
      */
     function getSetting(opt: GetSettingParam);
 
+    const enum Gender {
+        Unknown = 0,
+        Male = 1,
+        Female = 2,
+    }
+
+    const enum Language {
+
+        En = "en",
+
+        ZhCN = "zh_CN",
+
+        ZhTW = "zh_TW",
+    }
+
+    /**
+     * 用户信息  
+     * https://developers.weixin.qq.com/minigame/dev/api/open-api/user-info/UserInfo.html
+     */
+    interface UserInfo {
+        /**
+         * 用户昵称
+         */
+        nickName: string;
+
+        /**
+         * 用户头像图片的 URL。URL 最后一个数值代表正方形头像大小（有 0、46、64、96、132 数值可选，0 代表 640x640 的正方形头像，46 表示 46x46 的正方形头像，剩余数值以此类推。默认132），用户没有头像时该项为空。若用户更换头像，原有头像 URL 将失效。
+         */
+        avatarUrl: string;
+
+        /**
+         * 用户性别
+         */
+        gender: Gender;
+
+        /**
+         * 用户所在国家  
+         */
+        country: string;
+
+        /**
+         * 用户所在省份
+         */
+        province: string;
+
+        /**
+         * 用户所在城市
+         */
+        city: string;
+
+        /**
+         * 显示 country，province，city 所用的语言
+         */
+        language: Language;
+    }
+    const enum TextAlign {
+        Left = "left",
+        Center = "center",
+        Right = "right",
+    }
+
+    interface UserInfoButtonStyle extends RectanbleStyle {
+        /**
+         * 背景颜色
+         */
+        backgroundColor?: string;
+        /**
+         * 边框颜色
+         */
+        borderColor?: string;
+
+        /**
+         * 边框宽度
+         */
+        borderWidth?: number;
+
+        /**
+         * 边框圆角
+         */
+        borderRadius?: number;
+
+        /**
+         * 文本的颜色。格式为 6 位 16 进制数
+         */
+        color?: string;
+
+        /**
+         * 文本的水平对其方式
+         */
+        textAlign?: TextAlign;
+
+        /**
+         * 字号
+         */
+        fontSize?: number;
+
+        /**
+         * 行高
+         */
+        lineHeight?: number;
+    }
+
+
+    const enum UserInfoButtonType {
+        /**
+         * 可以设置背景色和文本的按钮  
+         */
+        Text = "text",
+        /**
+         * 只能设置背景贴图的按钮，背景贴图会直接拉伸到按钮的宽高	
+         */
+        Image = "image",
+    }
+
+    interface UserInfoResult {
+        /**
+         * 用户信息对象，不包含 openid 等敏感信息
+         */
+        userInfo?: UserInfo;
+        /**
+         * 不包括敏感信息的原始数据字符串，用于计算签名
+         */
+        rawData?: string;
+        /**
+         * 使用 sha1( rawData + sessionkey ) 得到字符串，用于校验用户信息，参考文档[signature](https://developers.weixin.qq.com/minigame/dev/guide/open-ability/signature.html)
+         */
+        signature?: string;
+
+        /**
+         * 包括敏感数据在内的完整用户信息的加密数据，详细见[加密数据解密算法](https://developers.weixin.qq.com/minigame/dev/guide/open-ability/signature.html)
+         */
+        encryptedData?: string;
+        /**
+         * 加密算法的初始向量，详细见[加密数据解密算法](https://developers.weixin.qq.com/minigame/dev/guide/open-ability/signature.html)
+         */
+        iv?: string;
+
+        /**
+         * 操作消息
+         */
+        errMsg?: string;
+    }
+
+    interface UserInfoButtonOnTapCallback {
+        (res: UserInfoResult): void
+    }
+
+    /**
+     * 用户信息按钮  
+     * https://developers.weixin.qq.com/minigame/dev/api/open-api/user-info/UserInfoButton.html  
+     */
+    interface UserInfoButton {
+        /**
+         * 按钮的类型。
+         */
+        type: UserInfoButtonType;
+
+        /**
+         * 按钮上的文本，仅当 type 为 text 时有效
+         */
+        text?: string;
+        /**
+         * 按钮的背景图片，仅当 type 为 image 时有效
+         */
+        image?: string;
+
+        style: UserInfoButtonStyle;
+
+        /**
+         * 显示用户信息按钮
+         */
+        show(): void;
+
+        /**
+         * 隐藏用户信息按钮
+         */
+        hide(): void;
+
+        /**
+         * 销毁用户信息按钮
+         */
+        distory(): void;
+
+        /**
+         * 监听用户信息按钮的点击事件
+         * @param fun 
+         */
+        onTab(fun: UserInfoButtonOnTapCallback): void;
+
+        /**
+         * 取消监听用户信息按钮的点击事件
+         * @param fun 
+         */
+        offTab(fun: UserInfoButtonOnTapCallback): void;
+    }
+
+
+    interface CreateUserInfoButtonParam {
+        /**
+         * 按钮的类型  
+         */
+        type: UserInfoButtonType;
+        /**
+         * 按钮上的文本，仅当 type 为 text 时有效
+         */
+        text?: string;
+
+        /**
+         * 按钮的背景图片，仅当 type 为 image 时有效
+         */
+        image?: string;
+
+        /**
+         * 按钮的样式
+         */
+        style: UserInfoButtonStyle;
+
+        /**
+         * 是否带上登录态信息。当 withCredentials 为 true 时，要求此前有调用过 wx.login 且登录态尚未过期，此时返回的数据会包含 encryptedData, iv 等敏感信息；当 withCredentials 为 false 时，不要求有登录态，返回的数据不包含 encryptedData, iv 等敏感信息
+         */
+        withCredentials: boolean;
+
+        /**
+         * 描述用户信息的语言
+         */
+        lang?: Language;
+    }
+
+    /**
+     * 创建用户信息按钮  
+     * https://developers.weixin.qq.com/minigame/dev/api/open-api/user-info/wx.createUserInfoButton.html  
+     * @version >= 2.0.1
+     * @param param 
+     * 
+     * @example
+     * let button = wx.createUserInfoButton({
+     *   type: 'text',
+     *   text: '获取用户信息',
+     *   style: {
+     *     left: 10,
+     *     top: 76,
+     *     width: 200,
+     *     height: 40,
+     *     lineHeight: 40,
+     *     backgroundColor: '#ff0000',
+     *     color: '#ffffff',
+     *     textAlign: 'center',
+     *     fontSize: 16,
+     *     borderRadius: 4
+     *   }
+     * })
+     * button.onTap((res) => {
+     *   console.log(res)
+     * })
+     */
+    function createUserInfoButton(param: CreateUserInfoButtonParam): UserInfoButton;
 }
