@@ -1,5 +1,7 @@
 declare namespace wx {
 
+    type Canvas = HTMLCanvasElement;
+
     interface Callback {
         /**
          * 	接口调用成功的回调函数
@@ -1730,7 +1732,7 @@ declare namespace wx {
     }
 
     interface GetBattleryInfoParam extends Callback {
-        success(ret: GetBattleryInfoSuccessRtn)
+        success?(ret: GetBattleryInfoSuccessRtn)
     }
 
     /**
@@ -1784,7 +1786,7 @@ declare namespace wx {
     }
 
     interface GetClipboardDataParam extends Callback {
-        success(res: GetClipboardDataSuccessRtn);
+        success?(res: GetClipboardDataSuccessRtn);
     }
 
     /**
@@ -2231,4 +2233,284 @@ declare namespace wx {
      * @param param 
      */
     function getUserInfo(param: GetUserInfoParam);
+
+    /**
+     * https://developers.weixin.qq.com/minigame/dev/api/open-api/data/KVData.html  
+     */
+    interface KVData {
+        key: string;
+
+        /**
+         * 数据的 value  
+         * 
+         * ## 将排行榜显示在小游戏中心
+         * 若开发者希望把游戏的排行榜显示于小游戏中心，则需要把排行榜数据存储到对应的key/value中，
+         * 一个排行榜数据对应一个key，多个排行榜则多个key。同时在mp.weixin.qq.com的小游戏管理后台“设置-游戏-排行榜设置”
+         * 下配置对应的key以及相关排行榜属性。且value的内容必须是JSON Object格式序列化的字符串，
+         * 该JSON Object顶层必须包含 wxgame 字段，定义如下：
+         *
+         *   |属性名|	类型|	必填|	说明 |
+         *   | -- | -- | -- | -- |
+         *   |score	|Int32|	是	|该榜单对应分数值|
+         *   |update_time|	Int64|	是|	该分数最后更新时间，Unix时间戳|
+         * 
+         * 注意： wxgame下开发者不可自定义其他字段， wxgame同级开发者可自由定义，比如定义一个detail 字段，用于存储取得该分数的中间状态。
+         *
+         * ## 举例
+         *   比如某小游戏有一个分数排行榜，分数排行榜需要记录分数以及获得分数的耗时
+         * （游戏内的排行榜需要展示耗时），可以在wxgame同级别定义一个cost_ms字段，
+         * 存储耗时的毫秒数。 分配一个不和已定义的托管数据的key相冲突的key作为分数排行榜的key，如 "score"。
+         *
+         * 在玩家耗时36500ms后，获得本周最高分16分，则需要更新分数，假设当前时间戳为1513080573， 则完整 value在序列化之前的内容如下：
+         * 
+         * ```json
+         * {
+         *   "wxgame": {
+         *           "score":16,
+         *           "update_time": 1513080573
+         *   },
+         *   "cost_ms":36500
+         * }
+         * ```
+         * 最终序列化为string后，value为`"{"wxgame":{"score":16,"update_time": 1513080573},"cost_ms":36500}"`。
+         */
+        value: string;
+    }
+
+    /**
+     * 要将排行榜显示在小游戏中心的数据结构
+     */
+    interface WXGameCenterValue {
+        wxgame: {
+            /**
+             * 该榜单对应分数值
+             */
+            score: number;
+            /**
+             * 该分数最后更新时间，Unix时间戳
+             */
+            update_time: number;
+        }
+
+        [key: string]: any;
+    }
+
+
+    interface SetUserCloudStorageParam extends Callback {
+        /**
+         * 用户的托管 KV 数据列表  
+         */
+        KVDataList: KVData[];
+    }
+
+    /**
+     * 对用户托管数据进行写数据操作。允许同时写多组 KV 数据。  
+     * https://developers.weixin.qq.com/minigame/dev/api/open-api/data/wx.setUserCloudStorage.html  
+     * 
+     * @version >= 1.9.92
+     * 
+     * ## 托管数据的限制  
+     * 1. 每个openid所标识的微信用户在每个游戏上托管的数据不能超过128个key-value对。
+     * 2. 上报的key-value列表当中每一项的key+value长度都不能超过1K(1024)字节。
+     * 3. 上报的key-value列表当中每一个key长度都不能超过128字节。
+     * 
+     * @param param 
+     */
+    function setUserCloudStorage(param: SetUserCloudStorageParam);
+
+
+    interface RemoveUserCloudStorageParam extends Callback {
+        /**
+         * 要删除掉 key 列表
+         */
+        keyList: string[];
+    }
+
+    /**
+     * 删除用户托管数据当中对应 key 的数据。  
+     * https://developers.weixin.qq.com/minigame/dev/api/open-api/data/wx.removeUserCloudStorage.html  
+     * 
+     * @version >= 1.9.92  
+     * 
+     * @param param 
+     */
+    function removeUserCloudStorage(param: RemoveUserCloudStorageParam);
+
+    /**
+     * 托管数据  
+     * https://developers.weixin.qq.com/minigame/dev/api/open-api/data/UserGameData.html
+     */
+    interface UserGameData {
+        /**
+         * 用户的微信头像 url
+         */
+        avatarUrl: string;
+        /**
+         * 用户的微信昵称  
+         */
+        nickname: string;
+        /**
+         * 用户的 openid  
+         */
+        openid: string;
+        /**
+         * 用户的托管 KV 数据列表  
+         */
+        KVDataList: KVData[];
+    }
+
+
+    interface GetUserCloadStorageResult {
+        /**
+         * 用户托管的 KV 数据列表
+         */
+        KVDataList: KVData[];
+    }
+
+
+    interface GetUserCloadStorageParam extends Callback {
+        /**
+         * 要获取的 key 列表  
+         */
+        keyList: string[];
+
+        success?(res: GetUserCloadStorageResult);
+    }
+
+    /**
+     * 获取当前用户托管数据当中对应 key 的数据。该接口只可在开放数据域下使用  
+     * https://developers.weixin.qq.com/minigame/dev/api/open-api/data/wx.getUserCloudStorage.html  
+     * @param param 
+     */
+    function getUserCloudStorage(param: GetUserCloadStorageParam);
+
+    /**
+     * 获取主域和开放数据域共享的 sharedCanvas。只有开放数据域能调用。  
+     * https://developers.weixin.qq.com/minigame/dev/api/open-api/data/wx.getSharedCanvas.html
+     */
+    function getSharedCanvas(): Canvas;
+
+    interface GetGroupCloadStorageResult {
+        /**
+         * 群同玩成员的托管数据
+         */
+        data: UserGameData[]
+    }
+
+    interface GetGroupCloadStorageParam extends Callback {
+        /**
+         * 群分享对应的 shareTicket
+         */
+        shareTicket: string;
+
+        /**
+         * 要拉取的 key 列表
+         */
+        keyList: string[];
+
+        success?(res: GetGroupCloadStorageResult);
+    }
+
+
+    /**
+     * 获取群同玩成员的游戏数据。小游戏通过群分享卡片打开的情况下才可以调用。该接口只可在开放数据域下使用  
+     * https://developers.weixin.qq.com/minigame/dev/api/open-api/data/wx.getGroupCloudStorage.html
+     * @param param 
+     */
+    function getGroupCloadStorage(param: GetGroupCloadStorageParam);
+
+
+    interface GetFriendCloadStorageResult {
+        /**
+         * 同玩好友的托管数据
+         */
+        data: UserGameData[];
+    }
+
+    interface GetFriendCloadStorageParam extends Callback {
+        /**
+         * 要拉取的 key 列表  
+         */
+        keyList: string[];
+
+        success?(res: GetFriendCloadStorageResult);
+    }
+
+
+
+    /**
+     * 拉取当前用户所有同玩好友的托管数据。该接口只可在开放数据域下使用  
+     * https://developers.weixin.qq.com/minigame/dev/api/open-api/data/wx.getFriendCloudStorage.html
+     * @param param 
+     */
+    function getFriendCloudStorage(param: GetFriendCloadStorageParam);
+
+    interface OpenDataContextGetUserInfo extends UserInfo {
+        /**
+         * 用户 openId
+         */
+        openId: string;
+    }
+
+    interface OpenDataContextGetUserInfoResult {
+        data: OpenDataContextGetUserInfo[];
+    }
+
+    interface OpenDataContextGetUserInfoParam extends Callback {
+        /**
+         * 要获取信息的用户的 openId 数组，如果要获取当前用户信息，则将数组中的一个元素设为 `selfOpenId`
+         */
+        openIdList: string[];
+
+        /**
+         * 显示用户信息的语言  
+         * 默认 `en`
+         */
+        lang: Language;
+
+        success?(res: OpenDataContextGetUserInfoResult);
+
+    }
+
+    /**
+     * 在无须用户授权的情况下，批量获取用户信息。该接口只在开放数据域下可用
+     * https://developers.weixin.qq.com/minigame/dev/api/open-api/data/OpenDataContext-wx.getUserInfo.html  
+     * @param param 
+     */
+    function getUserInfo(param: OpenDataContextGetUserInfoParam);
+
+
+    /**
+     * 监听主域发送的消息  
+     * @param callback 
+     */
+    function onMessage(callback: Function);
+
+    /**
+     * 开放数据域对象  
+     * https://developers.weixin.qq.com/minigame/dev/api/open-api/context/OpenDataContext.html
+     */
+    interface OpenDataContext {
+
+        /**
+         * 开放数据域和主域共享的 sharedCanvas  
+         */
+        canvas: Canvas;
+
+        /**
+         * 向开放数据域发送消息  
+         * https://developers.weixin.qq.com/minigame/dev/api/open-api/context/OpenDataContext.postMessage.html
+         * 
+         * @param message 要发送的消息，message 中及嵌套对象中 key 的 value 只能是 `primitive value`。即 number、string、boolean、null、undefined。
+         */
+        postMessage(message: any);
+    }
+
+    /**
+     * 获取开放数据域  
+     * https://developers.weixin.qq.com/minigame/dev/api/open-api/context/wx.getOpenDataContext.html  
+     * 
+     * @version >= 1.9.92
+     */
+    function getOpenDataContext(): OpenDataContext;
 }
