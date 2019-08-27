@@ -2126,7 +2126,7 @@ declare namespace wx {
         /**
          * 销毁用户信息按钮
          */
-        distory(): void;
+        destory(): void;
 
         /**
          * 监听用户信息按钮的点击事件
