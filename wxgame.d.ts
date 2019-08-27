@@ -2513,4 +2513,30 @@ declare namespace wx {
      * @version >= 1.9.92
      */
     function getOpenDataContext(): OpenDataContext;
+
+    interface CheckIsUserAdvisedToRestResult {
+        /**
+         * 是否建议用户休息  
+         */
+        result: boolean;
+    }
+
+    interface CheckIsUserAdvisedToRestParam {
+        /**
+         * 今天已经玩游戏的时间，单位：秒  
+         */
+        todayPlayedTime: number;
+
+        success?(res: CheckIsUserAdvisedToRestResult);
+    }
+
+    /**
+     * 根据用户当天游戏时间判断用户是否需要休息  
+     * https://developers.weixin.qq.com/minigame/dev/api/open-api/anti-addiction/wx.checkIsUserAdvisedToRest.html  
+     * 
+     * @version >=1.9.97
+     * 
+     * @param param 
+     */
+    function checkIsUserAdvisedToRest(param: CheckIsUserAdvisedToRestParam);
 }
