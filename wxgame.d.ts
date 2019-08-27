@@ -2199,4 +2199,36 @@ declare namespace wx {
      * })
      */
     function createUserInfoButton(param: CreateUserInfoButtonParam): UserInfoButton;
+
+
+    interface GetUserInfoParamResult extends UserInfoResult {
+        /**
+         * 敏感数据对应的云 ID，开通[云开发](https://developers.weixin.qq.com/minigame/dev/wxcloud/basis/getting-started.html)的小程序才会返回，可通过云调用直接获取开放数据，详细见[云调用直接获取开放数据](https://developers.weixin.qq.com/minigame/dev/guide/open-ability/signature.html#method-cloud)
+         * @version >= 2.7.0
+         */
+        cloudID: string;
+    }
+
+    interface GetUserInfoParam extends Callback {
+        /**
+         * 是否带上登录态信息。当 withCredentials 为 true 时，要求此前有调用过 wx.login 且登录态尚未过期，此时返回的数据会包含 encryptedData, iv 等敏感信息；当 withCredentials 为 false 时，不要求有登录态，返回的数据不包含 encryptedData, iv 等敏感信息。
+         */
+        withCredentials?: boolean;
+
+        /**
+         * 显示用户信息的语言  
+         * 默认值：en
+         */
+        lang?: Language;
+
+        success: { (res: GetUserInfoParamResult) };
+    }
+
+    /**
+     * 获取用户信息  
+     * 调用前需要 [用户授权](https://developers.weixin.qq.com/minigame/dev/guide/framework/authorize.html) scope.userInfo    
+     * https://developers.weixin.qq.com/minigame/dev/api/open-api/user-info/wx.getUserInfo.html
+     * @param param 
+     */
+    function getUserInfo(param: GetUserInfoParam);
 }
