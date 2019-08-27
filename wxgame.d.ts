@@ -2132,13 +2132,13 @@ declare namespace wx {
          * 监听用户信息按钮的点击事件
          * @param fun 
          */
-        onTab(fun: UserInfoButtonOnTapCallback): void;
+        onTap(fun: UserInfoButtonOnTapCallback): void;
 
         /**
          * 取消监听用户信息按钮的点击事件
          * @param fun 
          */
-        offTab(fun: UserInfoButtonOnTapCallback): void;
+        offTap(fun: UserInfoButtonOnTapCallback): void;
     }
 
 
