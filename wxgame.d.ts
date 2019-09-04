@@ -1,6 +1,29 @@
 declare namespace wx {
 
+    /**
+     * 画布对象  
+     * https://developers.weixin.qq.com/minigame/dev/api/render/canvas/Canvas.html
+     */
     type Canvas = HTMLCanvasElement;
+
+    /**
+     * 创建一个画布对象。首次调用创建的是显示在屏幕上的画布，之后调用创建的都是离屏画布。  
+     * https://developers.weixin.qq.com/minigame/dev/api/render/canvas/wx.createCanvas.html
+     */
+    function createCanvas(): Canvas;
+
+    /**
+     * 图片对象  
+     * https://developers.weixin.qq.com/minigame/dev/api/render/image/Image.html
+     */
+    type Image = HTMLImageElement;
+
+    /**
+     * 创建一个图片对象
+     * 
+     * https://developers.weixin.qq.com/minigame/dev/api/render/image/wx.createImage.html
+     */
+    function createImage(): Image;
 
     interface Callback {
         /**
