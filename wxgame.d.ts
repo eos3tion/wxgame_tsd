@@ -909,6 +909,252 @@ declare namespace wx {
      */
     function getUpdateManager(): UpdateManager;
 
+    /**
+     * Toast的图标
+     */
+    const enum ToastIcon {
+        /**
+         * 显示成功图标，此时 title 文本最多显示 7 个汉字长度
+         */
+        Success = "success",
+        /**
+         * 显示加载图标，此时 title 文本最多显示 7 个汉字长度
+         */
+        Loading = "loading",
+        /**
+         * 不显示图标，此时 title 文本最多可显示两行
+         * @version >=1.9.0
+         */
+        None = "none",
+    }
+
+    interface ShowToastParam extends Callback {
+        /**
+         * 提示的内容
+         */
+        title: string;
+        /**
+         * 图标  
+         * 默认值 `success`
+         */
+        icon?: ToastIcon;
+        /**
+         * 自定义图标的本地路径，image 的优先级高于 icon
+         */
+        image?: string;
+        /**
+         * 提示的延迟时间  
+         * 默认值：1500
+         */
+        duration?: number;
+        /**
+         * 是否显示透明蒙层，防止触摸穿透   
+         * 默认值：false
+         */
+        mask?: boolean;
+
+    }
+
+    /**
+     * 显示消息提示框  
+     * https://developers.weixin.qq.com/minigame/dev/api/ui/interaction/wx.showToast.html
+     * @param param 
+     * 
+     * **注意**  
+     * * `wx.showLoading` 和 `wx.showToast` 同时只能显示一个  
+     * * `wx.showToast` 应与 `wx.hideToast` 配对使用  
+     * 
+     * @example
+     * wx.showToast({
+     *   title: '成功',
+     *   icon: 'success',
+     *   duration: 2000
+     * })
+     * 
+     * 
+     */
+    function showToast(param: ShowToastParam);
+
+    /**
+     * 隐藏消息提示框  
+     * https://developers.weixin.qq.com/minigame/dev/api/ui/interaction/wx.hideToast.html
+     * @param param 
+     */
+    function hideToast(param: Callback);
+
+    interface ShowModalResult {
+        /**
+         * 为 true 时，表示用户点击了确定按钮
+         */
+        confirm: boolean;
+        /**
+         * 为 true 时，表示用户点击了取消（用于 Android 系统区分点击蒙层关闭还是点击取消按钮关闭）
+         * @version >=1.1.0
+         */
+        cancel: boolean;
+    }
+
+
+    interface ShowModalParam extends Callback {
+        /**
+         * 提示的标题  
+         * 默认值：  
+         */
+        title?: string;
+        /**
+         * 提示的内容  
+         * 默认值：  
+         */
+        content?: string;
+        /**
+         * 是否显示取消按钮  
+         * 默认值：true  
+         */
+        showCancel?: boolean;
+        /**
+         * 取消按钮的文字，最多 4 个字符  
+         * 默认值：'取消'  
+         */
+        cancelText?: string;
+        /**
+         * 取消按钮的文字颜色，必须是 16 进制格式的颜色字符串  
+         * 默认值：#000000  
+         */
+        cancelColor?: string;
+        /**
+         * 确认按钮的文字，最多 4 个字符  
+         * 默认值：'确定'  
+         */
+        confirmText?: string;
+        /**
+         * 确认按钮的文字颜色，必须是 16 进制格式的颜色字符串  
+         * 默认值：#576B95  
+         */
+        confirmColor?: string;
+
+        success(res: ShowModalResult): void
+
+
+    }
+
+
+    /**
+     * 显示模态对话框  
+     * https://developers.weixin.qq.com/minigame/dev/api/ui/interaction/wx.showModal.html
+     * @param param 
+     * 
+     * **注意**    
+     * * Android 6.7.2 以下版本，点击取消或蒙层时，回调 fail, errMsg 为 "fail cancel"；  
+     * * Android 6.7.2 及以上版本 和 iOS 点击蒙层不会关闭模态弹窗，所以尽量避免使用「取消」分支中实现业务逻辑  
+     * 
+     * @example
+     * wx.showModal({
+     *   title: '提示',
+     *   content: '这是一个模态弹窗',
+     *   success (res) {
+     *     if (res.confirm) {
+     *       console.log('用户点击确定')
+     *     } else if (res.cancel) {
+     *       console.log('用户点击取消')
+     *     }
+     *   }
+     * })
+     */
+    function showModal(param: ShowModalParam);
+
+
+    interface ShowLoadingParam extends Callback {
+        /**
+         * 提示的内容  
+         */
+        title: string;
+        /**
+         * 是否显示透明蒙层，防止触摸穿透  
+         * 默认值：false  
+         */
+        mask?: boolean;
+
+    }
+
+    /**
+     * 显示 loading 提示框。需主动调用 wx.hideLoading 才能关闭提示框  
+     * https://developers.weixin.qq.com/minigame/dev/api/ui/interaction/wx.showLoading.html  
+     * 
+     * @version >=1.1.0
+     * 
+     * @param param 
+     * 
+     * **注意**  
+     * * `wx.showLoading` 和 `wx.showToast` 同时只能显示一个  
+     * * `wx.showToast` 应与 `wx.hideToast` 配对使用  
+     * 
+     * @example
+     * wx.showLoading({
+     *   title: '加载中',
+     * })
+     * 
+     * setTimeout(function () {
+     *   wx.hideLoading()
+     * }, 2000)
+     * 
+     */
+    function showLoading(param: ShowLoadingParam);
+
+
+    /**
+     * 隐藏 loading 提示框  
+     * https://developers.weixin.qq.com/minigame/dev/api/ui/interaction/wx.hideLoading.html  
+     * 
+     * @version >= 1.1.0
+     * 
+     * @param param 
+     */
+    function hideLoading(param: Callback);
+
+    interface ShowActionSheetReturn {
+        /**
+         * 用户点击的按钮序号，从上到下的顺序，从0开始
+         */
+        tapIndex: number;
+    }
+
+    interface ShowActionSheetParam {
+        /**
+         * 按钮的文字数组，数组长度最大为 6  
+         */
+        itemList: string[];
+        /**
+         * 按钮的文字颜色  
+         * 默认值：#000000  
+         */
+        itemColor?: string;
+
+        success(res: ShowActionSheetReturn);
+    }
+
+
+    /**
+     * 显示操作菜单  
+     * https://developers.weixin.qq.com/minigame/dev/api/ui/interaction/wx.showActionSheet.html
+     * @param param 
+     * 
+     * **注意**    
+     * * Android 6.7.2 以下版本，点击取消或蒙层时，回调 fail, errMsg 为 "fail cancel"；  
+     * * Android 6.7.2 及以上版本 和 iOS 点击蒙层不会关闭模态弹窗，所以尽量避免使用「取消」分支中实现业务逻辑  
+     * 
+     * @example
+     * wx.showActionSheet({
+     *   itemList: ['A', 'B', 'C'],
+     *   success (res) {
+     *     console.log(res.tapIndex)
+     *   },
+     *   fail (res) {
+     *     console.log(res.errMsg)
+     *   }
+     * })
+     * 
+     */
+    function showActionSheet(param: ShowActionSheetParam);
 
     /**
      * 打开小程序的参数
